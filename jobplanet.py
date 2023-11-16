@@ -1,7 +1,6 @@
-import requests
 import pandas as pd
-from bs4 import BeautifulSoup
 import time
+import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -13,7 +12,6 @@ driver = webdriver.Chrome()
 driver.implicitly_wait(3)
 driver.get(url)
 driver.find_element(By.CSS_SELECTOR,'button.jply_btn_sm.inner_text.jf_b2').click()
-count = 0
 def init():
     # 대기 시간을 10초로 설정하고, filter_depth1 클래스를 가진 요소가 나타날 때까지 대기
     element = WebDriverWait(driver, 10).until(
@@ -112,28 +110,22 @@ def summary():
     print('채용절차: ',proc)
     print('복리후생: ',wel_fare)
     print('기타: ',etc)
+    filename = 'jobplanet.csv'
+    file_exists = os.path.exists(filename)
     data.append([company_name,deadline,job_title,experience,employment_type,salary,skills,intro_element,job_duties,qual,pref,proc,wel_fare,etc])
     df = pd.DataFrame(data,
                       columns=['회사 이름', '마감일', '직무', '경력', '고용형태', '급여', '스킬', '회사소개', '주요업무', '자격요건', '우대사항', '채용절차',
                                '복리후생', '기타'])
-    df.to_csv('jobplanet.csv', mode='a', header=True, encoding='utf-8-sig')
-
+    df.to_csv(filename, mode='a', header=not file_exists, encoding='utf-8-sig',index=False)
 
 def repeat(num):
-    global count
     for i in num:
-        print(count)
-        count = count+1
         driver.get(i)
         time.sleep(2)
         summary()
 
-
-
-#Functions to move data to database
 try:
     init()
-
     last_page_button = driver.find_element(By.XPATH, "(//div[@class='jply_pagination_ty1']//button)[last()-1]").text
     last_page_button = int(last_page_button)
     for i in range(1, last_page_button+1):
@@ -157,7 +149,6 @@ try:
             button.click()
             time.sleep(3)
     time.sleep(3)
-
 
 finally:
     # 작업이 끝난 후에는 웹 드라이버를 종료
