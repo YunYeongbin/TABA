@@ -16,6 +16,7 @@ driver.get(url)
 driver.find_element(By.CSS_SELECTOR,'.btn_tit').click()
 time.sleep(3)
 def crawling(crawling_url):
+    data = []
     # 새 창 열기
     driver.execute_script("window.open('');")
     # 새로 열린 창으로 스위치
@@ -36,8 +37,14 @@ def crawling(crawling_url):
 
         for dt, dd in zip(dt_elements, dd_elements):
             info[dt.text] = dd.text
-        print(co_name)
-        print(info)
+        data.append(info)
+        # 모든 딕셔너리의 키를 추출하여 유니크한 열 이름 리스트를 만듭니다.
+        all_keys = list({key for data_dict in data for key in data_dict})
+        df = pd.DataFrame(columns=all_keys)
+        frames = [df] + [pd.DataFrame([d]) for d in data]
+        df = pd.concat(frames, ignore_index=True).fillna('')
+        df.to_csv('jobkorea.csv', mode='a', header=True, encoding='utf-8-sig')
+
     except Exception as e:
         print(f"Error occurred while loading the page: {e}")
     finally:
@@ -45,6 +52,7 @@ def crawling(crawling_url):
         first_tab = driver.window_handles[0]
         driver.switch_to.window(window_name=first_tab)
         time.sleep(3)
+        return info
 try:
     element = driver.find_element(By.ID, "duty_step1_10031")
     driver.execute_script("arguments[0].click();", element)
@@ -70,7 +78,7 @@ try:
             a_tag = div.find_element(By.TAG_NAME,'a')
             href = a_tag.get_attribute('href')
             if href is not None:
-                crawling(href)
+                info = crawling(href)
         if i % 10 == 0:
             next_button = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable(

@@ -119,9 +119,6 @@ def summary():
     df.to_csv('jobplanet.csv', mode='a', header=True, encoding='utf-8-sig')
 
 
-
-
-
 def repeat(num):
     global count
     for i in num:
