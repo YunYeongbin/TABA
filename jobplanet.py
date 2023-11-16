@@ -8,7 +8,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
-
 url = "https://www.jobplanet.co.kr/job"
 driver = webdriver.Chrome()
 driver.implicitly_wait(3)
@@ -114,8 +113,10 @@ def summary():
     print('복리후생: ',wel_fare)
     print('기타: ',etc)
     data.append([company_name,deadline,job_title,experience,employment_type,salary,skills,intro_element,job_duties,qual,pref,proc,wel_fare,etc])
-    df = pd.DataFrame(data,columns=['회사 이름','마감일','직무','경력','고용형태','급여','스킬','회사소개','주요업무','자격요건','우대사항','채용절차','복리후생','기타'])
-    df.to_csv('jobplanet.csv',mode='a',header=True,encoding='utf-8-sig')
+    df = pd.DataFrame(data,
+                      columns=['회사 이름', '마감일', '직무', '경력', '고용형태', '급여', '스킬', '회사소개', '주요업무', '자격요건', '우대사항', '채용절차',
+                               '복리후생', '기타'])
+    df.to_csv('jobplanet.csv', mode='a', header=True, encoding='utf-8-sig')
 
 
 
