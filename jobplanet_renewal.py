@@ -24,10 +24,7 @@ def init():
 
 def repeat():
     time.sleep(2)
-    wait = WebDriverWait(driver, 10)
-    job_links = wait.until(EC.presence_of_all_elements_located(
-        (By.CSS_SELECTOR, ".recruitment-content .item-card a[href]")
-    ))
+
     start = time.time()
     last_height = driver.execute_script("return document.body.scrollHeight")
     while time.time() - start < 600:
@@ -40,6 +37,10 @@ def repeat():
         if new_height == last_height:
             break
         last_height = new_height
+    wait = WebDriverWait(driver, 10)
+    job_links = wait.until(EC.presence_of_all_elements_located(
+        (By.CSS_SELECTOR, ".recruitment-content .item-card a[href]")
+    ))
     print("찾은 링크의 개수:", len(job_links))
     urls = []
     for job_link in job_links:
@@ -462,22 +463,22 @@ try:
     init()
     cto()
     dba()
-    #erp()
-    #ios_developer()
-    # qa()
-    # vr_engineer()
-    # game_developer()
-    # technical_support()
-    # network_security_operator()
-    # back_end_developer()
-    # software_developer()
-    # software_architect()
-    # android_developer()
-    # web_developer()
-    # web_publisher()
-    # cloud_developer()
-    # front_end_developer()
-    # hardware_developer()
+    erp()
+    ios_developer()
+    qa()
+    vr_engineer()
+    game_developer()
+    technical_support()
+    network_security_operator()
+    back_end_developer()
+    software_developer()
+    software_architect()
+    android_developer()
+    web_developer()
+    web_publisher()
+    cloud_developer()
+    front_end_developer()
+    hardware_developer()
 finally:
     # 작업이 끝난 후에는 웹 드라이버를 종료
     driver.quit()
