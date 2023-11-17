@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 import os
+import pyodbc
 url = "https://www.wanted.co.kr/wdlist?country=kr&job_sort=job.latest_order&years=-1&locations=all"
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--start-maximized")
@@ -21,7 +22,15 @@ driver.implicitly_wait(3)
 # # 'href' 속성을 가져옵니다.
 # development_href = development_link.get_attribute('href')
 # driver.get(development_href)
-
+def database():
+    # 연결 문자열 설정
+    conn_str = 'DRIVER={Tibero 6 ODBC Driver};SERVER=15.164.171.29;PORT=8629;DATABASE=tibero;UID=sys;PWD=tibero;'
+    conn = pyodbc.connect(conn_str)
+    cursor = conn.cursor()
+    # 테이블 생성
+    cursor.execute("select * from v$database")
+    for row in cursor:
+        print(row)
 def crawling(crawling_urls):
     data = []
     for crawling_url in crawling_urls:
@@ -92,10 +101,11 @@ def software_enginner():
         href_value = job_link.get_attribute('href')
         data.append(href_value)
     info = crawling(data)
-    filename = 'wanted_software_engineer.csv'
-    file_exists = os.path.exists(filename)
-    df = pd.DataFrame(info, columns=['회사이름', '직무 제목', '기술스택'])
-    df.to_csv(filename, mode='a', header=not file_exists, encoding='utf-8-sig', index=False)
+    database(info)
+    # filename = 'wanted_software_engineer.csv'
+    # file_exists = os.path.exists(filename)
+    # df = pd.DataFrame(info, columns=['회사이름', '직무 제목', '기술스택'])
+    # df.to_csv(filename, mode='a', header=not file_exists, encoding='utf-8-sig', index=False)
     time.sleep(3)
 def web_developer():
     url = "https://www.wanted.co.kr/wdlist/518/873?country=kr&job_sort=job.latest_order&years=-1&locations=all"
@@ -483,7 +493,8 @@ def embedded_developer():
     df.to_csv(filename,mode="a",header=not file_exists,encoding="utf-8-sig",index=False)
     time.sleep(3)
 try:
-    software_enginner()
+    database()
+    #software_enginner()
     #web_developer()
     # server_developer()
     # frontend_developer()
