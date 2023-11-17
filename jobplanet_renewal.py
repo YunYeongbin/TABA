@@ -6,7 +6,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 import pyodbc
 url = "https://www.jobplanet.co.kr/job"
-driver = webdriver.Chrome()
+options = webdriver.ChromeOptions()
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+driver = webdriver.Chrome(options=options)
 driver.implicitly_wait(3)
 driver.get(url)
 driver.find_element(By.CSS_SELECTOR, 'button.jply_btn_sm.inner_text.jf_b2').click()
