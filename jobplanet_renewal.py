@@ -26,15 +26,14 @@ def init():
 
 
 def repeat():
-    time.sleep(2)
-
+    driver.implicitly_wait(3)
     start = time.time()
     last_height = driver.execute_script("return document.body.scrollHeight")
     while time.time() - start < 600:
         # scrollHeight까지 스크롤
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
         # 새로운 내용 로딩될때까지 기다림
-        time.sleep(4)
+        driver.implicitly_wait(4)
         # 새로운 내용 로딩됐는지 확인
         new_height = driver.execute_script("return document.body.scrollHeight")
         if new_height == last_height:
@@ -51,22 +50,26 @@ def repeat():
         urls.append(href_value)
     return urls
 def insert_data(cursor, company_name, job_title, title, skills):
-    # 중복 검사 쿼리
-    check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND title = ? AND skills = ?"
-    cursor.execute(check_query, company_name, job_title, title, skills)
-    result = cursor.fetchone()
+    try:
+        # 중복 검사 쿼리
+        check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND title = ? AND skills = ?"
+        cursor.execute(check_query, company_name, job_title, title, skills)
+        result = cursor.fetchone()
 
-    if result[0] == 0:  # 중복이 없는 경우
-        insert_query = "INSERT INTO job (company_name, job_title, title, skills) VALUES (?, ?, ?)"
-        cursor.execute(insert_query, company_name, job_title, title, skills)
-        return True  # 삽입 성공
-    else:
-        print("중복 데이터가 존재합니다.")
-        print(company_name)
-        print(job_title)
-        print(title)
-        print(skills)
-        return False  # 중복으로 인한 삽입 실패
+        if result[0] == 0:  # 중복이 없는 경우
+            insert_query = "INSERT INTO job (company_name, job_title, title, skills) VALUES (?, ?, ?, ?)"
+            cursor.execute(insert_query, company_name, job_title, title, skills)
+            return True  # 삽입 성공
+        else:
+            print("중복 데이터가 존재합니다.")
+            print(company_name)
+            print(job_title)
+            print(title)
+            print(skills)
+            return False  # 중복으로 인한 삽입 실패
+    except pyodbc.Error as e:
+        print(f"Error during database operation: {e}")
+        return False
 
 def database(info):
     # 연결 문자열 설정
@@ -74,20 +77,23 @@ def database(info):
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
 
-  # 'info' 리스트의 각 항목을 순회하며 데이터베이스에 삽입
-    for item in info:
-        company_name, job_title, title, skills = item
-        insert_success = insert_data(cursor, company_name, job_title, title, skills)
-        if insert_success:
-            print("Data inserted successfully.")
-        else:
-            print("Duplicate data. Insertion skipped.")
+    try:
+        # 'info' 리스트의 각 항목을 순회하며 데이터베이스에 삽입
+        for item in info:
+            company_name, job_title, title, skills = item
+            insert_success = insert_data(cursor, company_name, job_title, title, skills)
+            if insert_success:
+                print("Data inserted successfully.")
+            else:
+                print("Duplicate data. Insertion skipped.")
 
-    # 변경사항 커밋
-    conn.commit()
-
-    # 연결 종료
-    conn.close()
+        # 변경사항 커밋
+        conn.commit()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        # 연결 종료 (예외가 발생하더라도 연결이 닫히도록 함)
+        conn.close()
     # 테이블 생성
     #cursor.execute("select * from v$database")
     #for row in cursor:
@@ -446,7 +452,9 @@ def hardware_developer():
     apply_button.click()
     urls = repeat()
     info = crawling(urls)
-    database(info)
+    for i in info:
+        print (i)
+    #database(info)
     back()
 
 def crawling(urls):
@@ -454,7 +462,7 @@ def crawling(urls):
     sum_data = []
     for url in urls:
         driver.get(url)
-        time.sleep(2)
+        driver.implicitly_wait(3)
         company_name = driver.find_element(By.CSS_SELECTOR, '.company_name a').text.strip()
         title = driver.find_element(By.CSS_SELECTOR,'.ttl').text.strip()
         # try:
@@ -489,7 +497,7 @@ def crawling(urls):
                 skills = "기술을 찾을 수 없습니다."
 
             for job_title in job_titles:
-                sum_data.append([company_name, title, job_title.strip(), skills])  # 각 'title'과 'skills'를 'sum_data'에 추가
+                sum_data.append([company_name, job_title.strip(), title,  skills])  # 각 'title'과 'skills'를 'sum_data'에 추가
         except NoSuchElementException:
             continue
         recruitment_boxes = driver.find_elements(By.CLASS_NAME, 'recruitment-detail__box')
@@ -525,9 +533,9 @@ try:
     # android_developer()
     # web_developer()
     # web_publisher()
-    cloud_developer()
-    front_end_developer()
-    hardware_developer()
+    # cloud_developer()
+    # front_end_developer()
+    # hardware_developer()
 finally:
     # 작업이 끝난 후에는 웹 드라이버를 종료
     driver.quit()

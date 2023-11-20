@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pyodbc
+from selenium.common.exceptions import NoSuchElementException
 
 url = "https://www.wanted.co.kr/wdlist?country=kr&job_sort=job.latest_order&years=-1&locations=all"
 chrome_options = webdriver.ChromeOptions()
@@ -20,74 +21,104 @@ driver.implicitly_wait(3)
 # development_href = development_link.get_attribute('href')
 # driver.get(development_href)
 def insert_data(cursor, company_name, job_title, title, skills):
-    # 중복 검사 쿼리
-    check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND title = ? AND skills = ?"
-    cursor.execute(check_query, company_name, job_title, title, skills)
-    result = cursor.fetchone()
+    try:
+        # 중복 검사 쿼리
+        check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND title = ? AND skills = ?"
+        cursor.execute(check_query, company_name, job_title, title, skills)
+        result = cursor.fetchone()
 
-    if result[0] == 0:  # 중복이 없는 경우
-        insert_query = "INSERT INTO job (company_name, job_title, title, skills) VALUES (?, ?, ?, ?)"
-        cursor.execute(insert_query, company_name, job_title, title, skills)
-        return True  # 삽입 성공
-    else:
-        print("중복 데이터가 존재합니다.")
-        print(company_name)
-        print(job_title)
-        print(title)
-        print(skills)
-        return False  # 중복으로 인한 삽입 실패
+        if result[0] == 0:  # 중복이 없는 경우
+            insert_query = "INSERT INTO job (company_name, job_title, title, skills) VALUES (?, ?, ?, ?)"
+            cursor.execute(insert_query, company_name, job_title, title, skills)
+            return True  # 삽입 성공
+        else:
+            print("중복 데이터가 존재합니다.")
+            print(company_name)
+            print(job_title)
+            print(title)
+            print(skills)
+            return False  # 중복으로 인한 삽입 실패
+    except pyodbc.Error as e:
+        print(f"Error during database operation: {e}")
+        return False
 
 def database(info):
     # 연결 문자열 설정
     conn_str = 'DRIVER={Tibero 6 ODBC Driver};SERVER=15.164.171.29;PORT=8629;DATABASE=tibero;UID=sys;PWD=tibero;'
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
-    # for i in info:
-    #     print(i)
-  #'info' 리스트의 각 항목을 순회하며 데이터베이스에 삽입
-    for item in info:
-        company_name, job_title, title, skills = item
-        insert_success = insert_data(cursor, company_name, job_title, title, skills)
-        if insert_success:
-            print("Data inserted successfully.")
-        else:
-            print("Duplicate data. Insertion skipped.")
 
-    # 변경사항 커밋
-    conn.commit()
+    try:
+        # 'info' 리스트의 각 항목을 순회하며 데이터베이스에 삽입
+        for item in info:
+            company_name, job_title, title, skills = item
+            insert_success = insert_data(cursor, company_name, job_title, title, skills)
+            if insert_success:
+                print("Data inserted successfully.")
+            else:
+                print("Duplicate data. Insertion skipped.")
 
-    # 연결 종료
-    conn.close()
+        # 변경사항 커밋
+        conn.commit()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        # 연결 종료 (예외가 발생하더라도 연결이 닫히도록 함)
+        conn.close()
 def crawling(crawling_urls,job_title):
     data = []
     for crawling_url in crawling_urls:
         driver.get(crawling_url)
-        time.sleep(2)
+        driver.implicitly_wait(10)
         # 예시: '앱 개발자' 직무 제목 추출
-        title = driver.find_element(By.CSS_SELECTOR, "section.JobHeader_className__HttDA h2").text.strip()
+        try:
+            title = driver.find_element(By.CSS_SELECTOR, "section.JobHeader_className__HttDA h2").text.strip()
+        except NoSuchElementException:
+            title = "직무를 찾을 수 없습니다."
+
         # 예시: 회사 이름 추출
-        company_name = driver.find_element(By.CSS_SELECTOR,
+        try:
+            company_name = driver.find_element(By.CSS_SELECTOR,
                                            "section.JobHeader_className__HttDA a[data-attribute-id='company__click']").text.strip()
+        except NoSuchElementException:
+            company_name = "회사를 찾을 수 없습니다."
 
         # 예시: '주요업무' 섹션의 내용 추출
-        job_duties = driver.find_element(By.CSS_SELECTOR, "section.JobDescription_JobDescription__VWfcb p").text.strip()
+        try:
+
+            job_duties = driver.find_element(By.CSS_SELECTOR, "section.JobDescription_JobDescription__VWfcb p").text.strip()
+        except NoSuchElementException:
+            job_duties = "주요업무를 찾을 수 없습니다."
 
         # 예시: '자격요건' 섹션의 내용 추출
-        qualifications = driver.find_element(By.CSS_SELECTOR,
+        try:
+            qualifications = driver.find_element(By.CSS_SELECTOR,
                                              "section.JobDescription_JobDescription__VWfcb h6:nth-of-type(2) + p").text.strip()
+        except NoSuchElementException:
+            qualifications = "자격요건을 찾을 수 없습니다."
 
         # 예시: '우대사항' 섹션의 내용 추출
-        preferred_qualifications = driver.find_element(By.CSS_SELECTOR,
-                                                       "section.JobDescription_JobDescription__VWfcb h6:nth-of-type(3) + p").text.strip()
+        try:
+            preferred_qualifications = driver.find_element(By.CSS_SELECTOR,
+                                                   "section.JobDescription_JobDescription__VWfcb h6:nth-of-type(3) + p").text.strip()
+        except NoSuchElementException:
+            preferred_qualifications = "우대사항을 찾을 수 없습니다."
+
         # 혜택 및 복지 섹션의 내용 추출
-        benefits = driver.find_element(By.CSS_SELECTOR,
+        try:
+            benefits = driver.find_element(By.CSS_SELECTOR,
                                        "section.JobDescription_JobDescription__VWfcb h6:nth-of-type(4) + p").text.strip()
+        except NoSuchElementException:
+            benefits = "혜택 및 복지를 찾을 수 없습니다."
 
         # 기술스택 섹션의 내용 추출
         # 기술스택이 여러 개의 div 태그로 나누어져 있을 수 있으므로, 모든 관련 요소를 찾아 텍스트를 합칩니다.
-        tech_stack_elements = driver.find_elements(By.CSS_SELECTOR,
+        try:
+            tech_stack_elements = driver.find_elements(By.CSS_SELECTOR,
                                                    "div.JobDescription_JobDescription_skill_wrapper__9EdFE div.SkillItem_SkillItem__E2WtM")
-        tech_stack = ', '.join([element.text.strip() for element in tech_stack_elements])
+            tech_stack = ', '.join([element.text.strip() for element in tech_stack_elements])
+        except NoSuchElementException:
+            tech_stack = "기술스택을 찾을 수 없습니다."
         # 결과 출력
         # print("회사이름:", company_name)
         # print("직무 제목:", job_title)
@@ -99,6 +130,7 @@ def crawling(crawling_urls,job_title):
         data.append(
             [company_name, job_title, title, tech_stack])
     return data
+
 def repeat(url,job_title):
     driver.get(url)
     start = time.time()
@@ -125,9 +157,6 @@ def repeat(url,job_title):
         href_value = job_link.get_attribute('href')
         data.append(href_value)
     info = crawling(data, job_title)
-    for i in info:
-        print(i)
-        print(job_title)
     database(info)
 def software_enginner():
     url = "https://www.wanted.co.kr/wdlist/518/10110?country=kr&job_sort=job.latest_order&years=-1&locations=all"
@@ -243,28 +272,28 @@ def cio():
 
 
 try:
-    # software_enginner()
-    # web_developer()
-    # server_developer()
-    # frontend_developer()
-    # java_developer()
-    # C_Cpp_developer()
-    # python_developer()
-    # machine_learning_developer()
-    # data_engineer()
-    # android_developer()
-    # nodejs_developer()
-    # system_manager()
-    # devops_manager()
-    # ios_developer()
+    software_enginner()
+    web_developer()
+    server_developer()
+    frontend_developer()
+    java_developer()
+    C_Cpp_developer()
+    python_developer()
+    machine_learning_developer()
+    data_engineer()
+    android_developer()
+    nodejs_developer()
+    system_manager()
+    devops_manager()
+    ios_developer()
     # embedded_developer()
     # development_manager()
     # technical_support()
     # data_scientist()
-    # test_engineer()
-    # security_engineer()
-    # hardware_engineer()
-    # bigdata_engineer()
+    #test_engineer()
+    #security_engineer()
+    #hardware_engineer()
+    #bigdata_engineer()
     # product_manager()
     # cross_platform_developer()
     # php_developer()
@@ -276,9 +305,9 @@ try:
     # dotnet_developer()
     # cto()
     # graphics_engineer()
-    # bi_engineer()
-    # vr_engineer()
-    # rubyonrails_developer()
-    cio()
+    #bi_engineer()
+    #vr_engineer()
+    #rubyonrails_developer()
+    #cio()
 finally:
     driver.quit()
