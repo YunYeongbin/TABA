@@ -106,356 +106,69 @@ def back():
     driver.get(url)
     driver.find_element(By.CSS_SELECTOR, 'button.jply_btn_sm.inner_text.jf_b2').click()
     init()
-def cto():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
+def apply_filter_and_crawl(job_category):
     element = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CLASS_NAME, 'filter_depth2'))
     )
-    development_button = element.find_element(By.XPATH, '//label[contains(.//span, "CTO (Chief Technology Officer)")]')
+    development_button = element.find_element(By.XPATH, f'//label[contains(.//span, "{job_category}")]')
     development_button.click()
-    time.sleep(0.5)
+    driver.implicitly_wait(3)
     element = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CLASS_NAME, 'panel_bottom'))
     )
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
     apply_button = element.find_element(By.XPATH, '//button[text()="적용"]')
     apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def dba():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'filter_depth2'))
-    )
-    development_button = element.find_element(By.XPATH, '//label[contains(.//span, "DBA(Database Admin.)")]')
-    development_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'panel_bottom'))
-    )
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH, '//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-
-def erp():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'filter_depth2'))
-    )
-    development_button = element.find_element(By.XPATH, '//label[contains(.//span, "ERP")]')
-    development_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'panel_bottom'))
-    )
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH, '//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-
-
-def ios_developer():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'filter_depth2'))
-    )
-    development_button = element.find_element(By.XPATH, '//label[contains(.//span, "iOS 개발")]')
-    development_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'panel_bottom'))
-    )
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH, '//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-
-
-def qa():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'filter_depth2'))
-    )
-    development_button = element.find_element(By.XPATH, '//label[contains(.//span, "QA(Quality Assurance)")]')
-    development_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'panel_bottom'))
-    )
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH, '//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-
-def vr_engineer():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'filter_depth2'))
-    )
-    development_button = element.find_element(By.XPATH, '//label[contains(.//span, "VR 엔지니어")]')
-    development_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'panel_bottom'))
-    )
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH, '//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def game_developer():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'filter_depth2'))
-    )
-    game_developer_button = element.find_element(By.XPATH, '//label[contains(.//span, "게임개발")]')
-    game_developer_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'panel_bottom'))
-    )
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH, '//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def technical_support():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'filter_depth2'))
-    )
-
-    technical_support_button = element.find_element(By.XPATH, '//label[contains(.//span, "기술지원")]')
-    technical_support_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'panel_bottom'))
-    )
-
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH,'//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def network_security_operator():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'filter_depth2'))
-    )
-
-    network_security_operator_button = element.find_element(By.XPATH,'//label[contains(.//span, "네트워크/보안/운영")]')
-    network_security_operator_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'panel_bottom'))
-    )
-
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH,'//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def back_end_developer():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'filter_depth2'))
-    )
-
-    back_end_developer_button = element.find_element(By.XPATH,'//label[contains(.//span, "백엔드 개발")]')
-    back_end_developer_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'panel_bottom'))
-    )
-
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH,'//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def software_developer():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'filter_depth2'))
-    )
-
-    software_developer_button = element.find_element(By.XPATH,'//label[contains(.//span, "소프트웨어 개발")]')
-    software_developer_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'panel_bottom'))
-    )
-
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH,'//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def software_architect():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'filter_depth2'))
-    )
-
-    software_architect_button = element.find_element(By.XPATH,'//label[contains(.//span, "소프트웨어아키텍트")]')
-    software_architect_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'panel_bottom'))
-    )
-
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH,'//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def android_developer():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'filter_depth2'))
-    )
-
-    android_developer_button = element.find_element(By.XPATH,'//label[contains(.//span, "안드로이드 개발")]')
-    android_developer_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'panel_bottom'))
-    )
-
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH,'//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def web_developer():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'filter_depth2'))
-    )
-
-    web_developer_button = element.find_element(By.XPATH, '//label[contains(.//span, "웹개발")]')
-    web_developer_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'panel_bottom'))
-    )
-
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH, '//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def web_publisher():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'filter_depth2'))
-    )
-
-    web_publisher_button = element.find_element(By.XPATH, '//label[contains(.//span, "웹퍼블리셔")]')
-    web_publisher_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'panel_bottom'))
-    )
-
-    # panel_bottom 클래스를 가진 요소 내에서 "적용" 버튼을 찾아 클릭
-    apply_button = element.find_element(By.XPATH, '//button[text()="적용"]')
-    apply_button.click()
-
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def cloud_developer():
-    # 개발 버튼을 클릭한 후에 수행할 작업을 여기에 추가
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'filter_depth2'))
-    )
-
-    cloud_developer_button = element.find_element(By.XPATH,'//label[contains(.//span, "클라우드 개발")]')
-    cloud_developer_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'panel_bottom'))
-    )
-
-    apply_button = element.find_element(By.XPATH,'//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def front_end_developer():
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'filter_depth2'))
-    )
-
-    front_end_developer_button = element.find_element(By.XPATH,'//label[contains(.//span, "프론트엔드 개발")]')
-    front_end_developer_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'panel_bottom'))
-    )
-
-    apply_button = element.find_element(By.XPATH,'//button[text()="적용"]')
-    apply_button.click()
-    urls = repeat()
-    info = crawling(urls)
-    database(info)
-    back()
-def hardware_developer():
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'filter_depth2'))
-    )
-
-    hardware_developer_button = element.find_element(By.XPATH,'//label[contains(.//span, "하드웨어 개발")]')
-    hardware_developer_button.click()
-    time.sleep(0.5)
-    element = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.CLASS_NAME,'panel_bottom'))
-    )
-
-    apply_button = element.find_element(By.XPATH,'//button[text()="적용"]')
-    apply_button.click()
+    time.sleep(3)
     urls = repeat()
     info = crawling(urls)
     for i in info:
-        print (i)
+        print(i)
     #database(info)
     back()
+
+def cto():
+    apply_filter_and_crawl("CTO (Chief Technology Officer)")
+
+def dba():
+    apply_filter_and_crawl("DBA(Database Admin.)")
+
+def erp():
+    apply_filter_and_crawl("ERP")
+
+
+def ios_developer():
+    apply_filter_and_crawl("iOS 개발")
+
+def qa():
+    apply_filter_and_crawl("QA(Quality Assurance)")
+
+def vr_engineer():
+    apply_filter_and_crawl("VR 엔지니어")
+def game_developer():
+    apply_filter_and_crawl("게임개발")
+def technical_support():
+    apply_filter_and_crawl("기술지원")
+def network_security_operator():
+    apply_filter_and_crawl("네트워크/보안/운영")
+def back_end_developer():
+    apply_filter_and_crawl("백엔드 개발")
+def software_developer():
+    apply_filter_and_crawl("소프트웨어 개발")
+def software_architect():
+    apply_filter_and_crawl("소프트웨어아키텍트")
+def android_developer():
+    apply_filter_and_crawl("안드로이드 개발")
+def web_developer():
+    apply_filter_and_crawl("웹개발")
+def web_publisher():
+    apply_filter_and_crawl("웹퍼블리셔")
+def cloud_developer():
+    apply_filter_and_crawl("클라우드 개발")
+def front_end_developer():
+    apply_filter_and_crawl("프론트엔드 개발")
+def hardware_developer():
+    apply_filter_and_crawl("하드웨어 개발")
+
 
 def crawling(urls):
     combined_data = []
@@ -518,7 +231,7 @@ def crawling(urls):
 
 try:
     init()
-    # cto()
+    cto()
     # dba()
     # erp()
     # ios_developer()

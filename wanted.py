@@ -193,7 +193,7 @@ def nodejs_developer():
     repeat(url,"Node.js 개발")
 def system_manager():
     url = "https://www.wanted.co.kr/wdlist/518/665?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url, "시스템 관리자")
+    repeat(url, "시스템, 네트워크 관리자")
 def devops_manager():
     url = "https://www.wanted.co.kr/wdlist/518/674?country=kr&job_sort=job.latest_order&years=-1&locations=all"
     repeat(url,"DevOps 개발")
@@ -217,7 +217,7 @@ def test_engineer():
     repeat(url,"QA(Quality Assurance)")
 def security_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/671?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url,"네트워크/보안/운영")
+    repeat(url,"보안 엔지니어")
 def hardware_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/672?country=kr&job_sort=job.latest_order&years=-1&locations=all"
     repeat(url,"하드웨어 엔지니어")
