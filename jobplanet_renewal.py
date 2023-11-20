@@ -50,20 +50,50 @@ def repeat():
         href_value = job_link.get_attribute('href')
         urls.append(href_value)
     return urls
+def insert_data(cursor, company_name, job_title, skills):
+    # 중복 검사 쿼리
+    check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND skills = ?"
+    cursor.execute(check_query, company_name, job_title, skills)
+    result = cursor.fetchone()
 
+    if result[0] == 0:  # 중복이 없는 경우
+        insert_query = "INSERT INTO job (company_name, job_title, skills) VALUES (?, ?, ?)"
+        cursor.execute(insert_query, company_name, job_title, skills)
+        return True  # 삽입 성공
+    else:
+        print("중복 데이터가 존재합니다.")
+        print(company_name)
+        print(job_title)
+        print(skills)
+        return False  # 중복으로 인한 삽입 실패
 
 def database(info):
     # 연결 문자열 설정
     conn_str = 'DRIVER={Tibero 6 ODBC Driver};SERVER=15.164.171.29;PORT=8629;DATABASE=tibero;UID=sys;PWD=tibero;'
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
+
+  # 'info' 리스트의 각 항목을 순회하며 데이터베이스에 삽입
+    for item in info:
+        company_name, job_title, skills = item
+        insert_success = insert_data(cursor, company_name, job_title, skills)
+        if insert_success:
+            print("Data inserted successfully.")
+        else:
+            print("Duplicate data. Insertion skipped.")
+
+    # 변경사항 커밋
+    conn.commit()
+
+    # 연결 종료
+    conn.close()
     # 테이블 생성
     #cursor.execute("select * from v$database")
     #for row in cursor:
         #print(row)
-    for data in info:
-        for i in data:
-            print(i.strip())
+    # for data in info:
+    #     for i in data:
+    #         print(i.strip())
 def back():
     url = "https://www.jobplanet.co.kr/job"
     driver.get(url)
@@ -420,32 +450,46 @@ def hardware_developer():
 
 def crawling(urls):
     combined_data = []
+    sum_data = []
     for url in urls:
         driver.get(url)
         time.sleep(2)
         company_name = driver.find_element(By.CSS_SELECTOR, '.company_name a').text.strip()
-        try:
-            deadline = driver.find_element(By.CSS_SELECTOR, '.recruitment-summary__end').text.strip()
-        except NoSuchElementException:
-            deadline = "마감일을 찾을 수 없습니다."
+        # try:
+        #     deadline = driver.find_element(By.CSS_SELECTOR, '.recruitment-summary__end').text.strip()
+        # except NoSuchElementException:
+        #     deadline = "마감일을 찾을 수 없습니다."
+        # try:
+        #     job_title = driver.find_elements(By.CSS_SELECTOR, '.recruitment-summary__dd')[1].text.strip()
+        # except NoSuchElementException:
+        #     job_title = "직무를 찾을 수 없습니다."
+        # try:
+        #     experience = driver.find_elements(By.CSS_SELECTOR, '.recruitment-summary__dd')[2].text.strip()
+        # except NoSuchElementException:
+        #     experience = "경력을 찾을 수 없습니다."
+        # try:
+        #     location = driver.find_element(By.CSS_SELECTOR, '.recruitment-summary__location').text
+        # except NoSuchElementException:
+        #     location = "지역을 찾을 수 없습니다."
+        # try:
+        #     skills = driver.find_elements(By.CSS_SELECTOR, '.recruitment-summary__dd')[5].text.strip()
+        # except NoSuchElementException:
+        #     skills = "기술을 찾을 수 없습니다."
+        #sum_data.append([job_title, skills])
+        #sum.append([company_name, deadline, job_title, experience, location, skills])
+
         try:
             job_title = driver.find_elements(By.CSS_SELECTOR, '.recruitment-summary__dd')[1].text.strip()
+            job_titles = job_title.split(",")  # 쉼표로 'job_title' 분리
+            try:
+                skills = driver.find_elements(By.CSS_SELECTOR, '.recruitment-summary__dd')[5].text.strip()
+            except NoSuchElementException:
+                skills = "기술을 찾을 수 없습니다."
+
+            for title in job_titles:
+                sum_data.append([company_name,title.strip(), skills])  # 각 'title'과 'skills'를 'sum_data'에 추가
         except NoSuchElementException:
-            job_title = "직무를 찾을 수 없습니다."
-        try:
-            experience = driver.find_elements(By.CSS_SELECTOR, '.recruitment-summary__dd')[2].text.strip()
-        except NoSuchElementException:
-            experience = "경력을 찾을 수 없습니다."
-        try:
-            location = driver.find_element(By.CSS_SELECTOR, '.recruitment-summary__location').text
-        except NoSuchElementException:
-            location = "지역을 찾을 수 없습니다."
-        try:
-            skills = driver.find_elements(By.CSS_SELECTOR, '.recruitment-summary__dd')[5].text.strip()
-        except NoSuchElementException:
-            skills = "기술을 찾을 수 없습니다."
-        sum = []
-        sum.append([company_name, deadline, job_title, experience, location, skills])
+            continue
         recruitment_boxes = driver.find_elements(By.CLASS_NAME, 'recruitment-detail__box')
         # 각 박스의 텍스트를 저장할 리스트 초기화
         recruitment_details = []
@@ -458,27 +502,27 @@ def crawling(urls):
                 first_line = text[:first_line_end].strip()
                 remaining_text = text[first_line_end:].strip()
                 recruitment_details.append(remaining_text)
-        combined_data.append([company_name, deadline, job_title, experience, location, skills] + recruitment_details)
-    return combined_data
+        #combined_data.append([company_name, deadline, job_title, experience, location, skills] + recruitment_details)
+    return sum_data
 
 
 try:
     init()
-    cto()
-    dba()
-    erp()
-    ios_developer()
-    qa()
-    vr_engineer()
-    game_developer()
-    technical_support()
-    network_security_operator()
-    back_end_developer()
-    software_developer()
-    software_architect()
-    android_developer()
-    web_developer()
-    web_publisher()
+    # cto()
+    # dba()
+    # erp()
+    # ios_developer()
+    # qa()
+    # vr_engineer()
+    # game_developer()
+    # technical_support()
+    # network_security_operator()
+    # back_end_developer()
+    # software_developer()
+    # software_architect()
+    # android_developer()
+    # web_developer()
+    # web_publisher()
     cloud_developer()
     front_end_developer()
     hardware_developer()
