@@ -19,32 +19,35 @@ driver.implicitly_wait(3)
 # # 'href' 속성을 가져옵니다.
 # development_href = development_link.get_attribute('href')
 # driver.get(development_href)
-def insert_data(cursor, company_name, job_title, skills):
+def insert_data(cursor, company_name, job_title, title, skills):
     # 중복 검사 쿼리
-    check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND skills = ?"
-    cursor.execute(check_query, company_name, job_title, skills)
+    check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND title = ? AND skills = ?"
+    cursor.execute(check_query, company_name, job_title, title, skills)
     result = cursor.fetchone()
 
     if result[0] == 0:  # 중복이 없는 경우
-        insert_query = "INSERT INTO job (company_name, job_title, skills) VALUES (?, ?, ?)"
-        cursor.execute(insert_query, company_name, job_title, skills)
+        insert_query = "INSERT INTO job (company_name, job_title, title, skills) VALUES (?, ?, ?, ?)"
+        cursor.execute(insert_query, company_name, job_title, title, skills)
         return True  # 삽입 성공
     else:
         print("중복 데이터가 존재합니다.")
         print(company_name)
         print(job_title)
+        print(title)
         print(skills)
         return False  # 중복으로 인한 삽입 실패
+
 def database(info):
     # 연결 문자열 설정
     conn_str = 'DRIVER={Tibero 6 ODBC Driver};SERVER=15.164.171.29;PORT=8629;DATABASE=tibero;UID=sys;PWD=tibero;'
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
-
-  # 'info' 리스트의 각 항목을 순회하며 데이터베이스에 삽입
+    # for i in info:
+    #     print(i)
+  #'info' 리스트의 각 항목을 순회하며 데이터베이스에 삽입
     for item in info:
-        company_name, job_title, skills = item
-        insert_success = insert_data(cursor, company_name, job_title, skills)
+        company_name, job_title, title, skills = item
+        insert_success = insert_data(cursor, company_name, job_title, title, skills)
         if insert_success:
             print("Data inserted successfully.")
         else:
@@ -61,8 +64,7 @@ def crawling(crawling_urls,job_title):
         driver.get(crawling_url)
         time.sleep(2)
         # 예시: '앱 개발자' 직무 제목 추출
-        #job_title = driver.find_element(By.CSS_SELECTOR, "section.JobHeader_className__HttDA h2").text.strip()
-
+        title = driver.find_element(By.CSS_SELECTOR, "section.JobHeader_className__HttDA h2").text.strip()
         # 예시: 회사 이름 추출
         company_name = driver.find_element(By.CSS_SELECTOR,
                                            "section.JobHeader_className__HttDA a[data-attribute-id='company__click']").text.strip()
@@ -95,7 +97,7 @@ def crawling(crawling_urls,job_title):
         # print("혜택 및 복지:", benefits)
         # print("기술스택:", tech_stack)
         data.append(
-            [company_name, job_title, tech_stack])
+            [company_name, job_title, title, tech_stack])
     return data
 def repeat(url,job_title):
     driver.get(url)
@@ -122,9 +124,10 @@ def repeat(url,job_title):
     for job_link in job_links:
         href_value = job_link.get_attribute('href')
         data.append(href_value)
-    info = crawling(data,job_title)
-    # for i in info:
-    #     print(i)
+    info = crawling(data, job_title)
+    for i in info:
+        print(i)
+        print(job_title)
     database(info)
 def software_enginner():
     url = "https://www.wanted.co.kr/wdlist/518/10110?country=kr&job_sort=job.latest_order&years=-1&locations=all"
@@ -240,11 +243,11 @@ def cio():
 
 
 try:
-    software_enginner()
-    web_developer()
-    server_developer()
-    frontend_developer()
-    java_developer()
+    # software_enginner()
+    # web_developer()
+    # server_developer()
+    # frontend_developer()
+    # java_developer()
     # C_Cpp_developer()
     # python_developer()
     # machine_learning_developer()
@@ -276,6 +279,6 @@ try:
     # bi_engineer()
     # vr_engineer()
     # rubyonrails_developer()
-    # cio()
+    cio()
 finally:
     driver.quit()
