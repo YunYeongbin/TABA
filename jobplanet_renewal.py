@@ -50,20 +50,21 @@ def repeat():
         href_value = job_link.get_attribute('href')
         urls.append(href_value)
     return urls
-def insert_data(cursor, company_name, job_title, skills):
+def insert_data(cursor, company_name, job_title, title, skills):
     # 중복 검사 쿼리
-    check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND skills = ?"
-    cursor.execute(check_query, company_name, job_title, skills)
+    check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND title = ? AND skills = ?"
+    cursor.execute(check_query, company_name, job_title, title, skills)
     result = cursor.fetchone()
 
     if result[0] == 0:  # 중복이 없는 경우
-        insert_query = "INSERT INTO job (company_name, job_title, skills) VALUES (?, ?, ?)"
-        cursor.execute(insert_query, company_name, job_title, skills)
+        insert_query = "INSERT INTO job (company_name, job_title, title, skills) VALUES (?, ?, ?)"
+        cursor.execute(insert_query, company_name, job_title, title, skills)
         return True  # 삽입 성공
     else:
         print("중복 데이터가 존재합니다.")
         print(company_name)
         print(job_title)
+        print(title)
         print(skills)
         return False  # 중복으로 인한 삽입 실패
 
@@ -75,8 +76,8 @@ def database(info):
 
   # 'info' 리스트의 각 항목을 순회하며 데이터베이스에 삽입
     for item in info:
-        company_name, job_title, skills = item
-        insert_success = insert_data(cursor, company_name, job_title, skills)
+        company_name, job_title, title, skills = item
+        insert_success = insert_data(cursor, company_name, job_title, title, skills)
         if insert_success:
             print("Data inserted successfully.")
         else:
@@ -455,6 +456,7 @@ def crawling(urls):
         driver.get(url)
         time.sleep(2)
         company_name = driver.find_element(By.CSS_SELECTOR, '.company_name a').text.strip()
+        title = driver.find_element(By.CSS_SELECTOR,'.ttl').text.strip()
         # try:
         #     deadline = driver.find_element(By.CSS_SELECTOR, '.recruitment-summary__end').text.strip()
         # except NoSuchElementException:
@@ -486,8 +488,8 @@ def crawling(urls):
             except NoSuchElementException:
                 skills = "기술을 찾을 수 없습니다."
 
-            for title in job_titles:
-                sum_data.append([company_name,title.strip(), skills])  # 각 'title'과 'skills'를 'sum_data'에 추가
+            for job_title in job_titles:
+                sum_data.append([company_name, title, job_title.strip(), skills])  # 각 'title'과 'skills'를 'sum_data'에 추가
         except NoSuchElementException:
             continue
         recruitment_boxes = driver.find_elements(By.CLASS_NAME, 'recruitment-detail__box')

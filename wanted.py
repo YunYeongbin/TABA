@@ -1,13 +1,10 @@
-import pandas as pd
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.action_chains import ActionChains
-import os
 import pyodbc
+
 url = "https://www.wanted.co.kr/wdlist?country=kr&job_sort=job.latest_order&years=-1&locations=all"
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--start-maximized")
@@ -22,22 +19,49 @@ driver.implicitly_wait(3)
 # # 'href' 속성을 가져옵니다.
 # development_href = development_link.get_attribute('href')
 # driver.get(development_href)
+def insert_data(cursor, company_name, job_title, skills):
+    # 중복 검사 쿼리
+    check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND skills = ?"
+    cursor.execute(check_query, company_name, job_title, skills)
+    result = cursor.fetchone()
+
+    if result[0] == 0:  # 중복이 없는 경우
+        insert_query = "INSERT INTO job (company_name, job_title, skills) VALUES (?, ?, ?)"
+        cursor.execute(insert_query, company_name, job_title, skills)
+        return True  # 삽입 성공
+    else:
+        print("중복 데이터가 존재합니다.")
+        print(company_name)
+        print(job_title)
+        print(skills)
+        return False  # 중복으로 인한 삽입 실패
 def database(info):
     # 연결 문자열 설정
     conn_str = 'DRIVER={Tibero 6 ODBC Driver};SERVER=15.164.171.29;PORT=8629;DATABASE=tibero;UID=sys;PWD=tibero;'
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
-    # 테이블 생성
-    cursor.execute("select * from v$database")
-    for row in cursor:
-        print(row)
-def crawling(crawling_urls):
+
+  # 'info' 리스트의 각 항목을 순회하며 데이터베이스에 삽입
+    for item in info:
+        company_name, job_title, skills = item
+        insert_success = insert_data(cursor, company_name, job_title, skills)
+        if insert_success:
+            print("Data inserted successfully.")
+        else:
+            print("Duplicate data. Insertion skipped.")
+
+    # 변경사항 커밋
+    conn.commit()
+
+    # 연결 종료
+    conn.close()
+def crawling(crawling_urls,job_title):
     data = []
     for crawling_url in crawling_urls:
         driver.get(crawling_url)
         time.sleep(2)
         # 예시: '앱 개발자' 직무 제목 추출
-        job_title = driver.find_element(By.CSS_SELECTOR, "section.JobHeader_className__HttDA h2").text.strip()
+        #job_title = driver.find_element(By.CSS_SELECTOR, "section.JobHeader_className__HttDA h2").text.strip()
 
         # 예시: 회사 이름 추출
         company_name = driver.find_element(By.CSS_SELECTOR,
@@ -73,7 +97,7 @@ def crawling(crawling_urls):
         data.append(
             [company_name, job_title, tech_stack])
     return data
-def repeat(url):
+def repeat(url,job_title):
     driver.get(url)
     start = time.time()
     last_height = driver.execute_script("return document.body.scrollHeight")
@@ -98,128 +122,129 @@ def repeat(url):
     for job_link in job_links:
         href_value = job_link.get_attribute('href')
         data.append(href_value)
-    info = crawling(data)
-    print(info)
-    #database(info)
-    time.sleep(3)
+    info = crawling(data,job_title)
+    # for i in info:
+    #     print(i)
+    database(info)
 def software_enginner():
     url = "https://www.wanted.co.kr/wdlist/518/10110?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"소프트웨어 개발")
 def web_developer():
     url = "https://www.wanted.co.kr/wdlist/518/873?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"웹개발")
 def server_developer():
     url = "https://www.wanted.co.kr/wdlist/518/872?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"서버 개발")
 def frontend_developer():
     url = "https://www.wanted.co.kr/wdlist/518/669?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"프론트엔드 개발")
 def java_developer():
     url = "https://www.wanted.co.kr/wdlist/518/660?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"자바 개발")
 def C_Cpp_developer():
     url = "https://www.wanted.co.kr/wdlist/518/900?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"C/C++ 개발")
 def python_developer():
     url = "https://www.wanted.co.kr/wdlist/518/899"
-    repeat(url)
+    repeat(url,"파이썬 개발")
 def machine_learning_developer():
     url = "https://www.wanted.co.kr/wdlist/518/1634?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"머신러닝 개발")
 def data_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/655?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"데이터 엔지니어")
 def android_developer():
     url = "https://www.wanted.co.kr/wdlist/518/677"
-    repeat(url)
+    repeat(url,"안드로이드 개발")
 def nodejs_developer():
     url = "https://www.wanted.co.kr/wdlist/518/895"
-    repeat(url)
+    repeat(url,"Node.js 개발")
 def system_manager():
     url = "https://www.wanted.co.kr/wdlist/518/665?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url, "시스템 관리자")
 def devops_manager():
     url = "https://www.wanted.co.kr/wdlist/518/674?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"DevOps 개발")
 def ios_developer():
     url = "https://www.wanted.co.kr/wdlist/518/678?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"iOS 개발")
 def embedded_developer():
     url = "https://www.wanted.co.kr/wdlist/518/658?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"임베디드 개발")
 def development_manager():
     url = "https://www.wanted.co.kr/wdlist/518/877?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"개발 매니저")
 def technical_support():
     url = "https://www.wanted.co.kr/wdlist/518/1026?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"기술지원")
 def data_scientist():
     url = "https://www.wanted.co.kr/wdlist/518/1024?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"데이터 분석가")
 def test_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/676?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"QA(Quality Assurance)")
 def security_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/671?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"네트워크/보안/운영")
 def hardware_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/672?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"하드웨어 엔지니어")
 def bigdata_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/1025?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"빅데이터 엔지니어")
 def product_manager():
     url = "https://www.wanted.co.kr/wdlist/518/876?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"제품 관리자")
 def cross_platform_developer():
     url = "https://www.wanted.co.kr/wdlist/518/10111?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"크로스 플랫폼 개발")
 def php_developer():
     url = "https://www.wanted.co.kr/wdlist/518/893?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"PHP 개발")
 def dba():
     url = "https://www.wanted.co.kr/wdlist/518/10231?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"DBA(Database Admin.)")
 def erp_professional():
     url = "https://www.wanted.co.kr/wdlist/518/10230?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"ERP")
 def blockchain_flatform_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/1027?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"블록체인 플랫폼 개발자")
 def sound_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/896?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"사운드 엔지니어")
 def web_publisher():
     url = "https://www.wanted.co.kr/wdlist/518/939?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"웹퍼블리셔")
 def dotnet_developer():
     url = "https://www.wanted.co.kr/wdlist/518/661?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,".NET 개발")
 def cto():
     url = "https://www.wanted.co.kr/wdlist/518/795?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"CTO (Chief Technology Officer)")
 def graphics_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/898?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"그래픽스 엔지니어")
 def bi_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/1022?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"BI 엔지니어")
 def vr_engineer():
     url = "https://www.wanted.co.kr/wdlist/518/10112?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"VR 엔지니어")
 def rubyonrails_developer():
     url = "https://www.wanted.co.kr/wdlist/518/894?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"Ruby on Rails 개발자")
 def cio():
     url = "https://www.wanted.co.kr/wdlist/518/793?country=kr&job_sort=job.latest_order&years=-1&locations=all"
-    repeat(url)
+    repeat(url,"CIO (Chief Information Officer)")
+
 
 try:
-    # software_enginner()
-    # web_developer()
-    # server_developer()
-    # frontend_developer()
-    # java_developer()
+    software_enginner()
+    web_developer()
+    server_developer()
+    frontend_developer()
+    java_developer()
     # C_Cpp_developer()
     # python_developer()
     # machine_learning_developer()
@@ -250,7 +275,7 @@ try:
     # graphics_engineer()
     # bi_engineer()
     # vr_engineer()
-    rubyonrails_developer()
-    cio()
+    # rubyonrails_developer()
+    # cio()
 finally:
     driver.quit()
