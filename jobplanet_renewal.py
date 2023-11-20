@@ -33,7 +33,7 @@ def repeat():
         # scrollHeight까지 스크롤
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
         # 새로운 내용 로딩될때까지 기다림
-        time.sleep(3)
+        time.sleep(4)
         # 새로운 내용 로딩됐는지 확인
         new_height = driver.execute_script("return document.body.scrollHeight")
         if new_height == last_height:
@@ -118,11 +118,11 @@ def apply_filter_and_crawl(job_category):
     )
     apply_button = element.find_element(By.XPATH, '//button[text()="적용"]')
     apply_button.click()
-    driver.implicitly_wait(3)
+    time.sleep(3)
     urls = repeat()
     info = crawling(urls)
 
-    database(info)
+    #database(info)
     back()
 
 def cto():
@@ -232,10 +232,10 @@ try:
     init()
     #cto()
     #dba()
-    erp()
-    ios_developer()
-    qa()
-    # vr_engineer()
+    # erp()
+    # ios_developer()
+    # qa()
+    vr_engineer()
     # game_developer()
     # technical_support()
     # network_security_operator()
