@@ -122,7 +122,7 @@ def apply_filter_and_crawl(job_category):
     urls = repeat()
     info = crawling(urls)
 
-    #database(info)
+    database(info)
     back()
 
 def cto():
@@ -235,8 +235,8 @@ try:
     # erp()
     # ios_developer()
     # qa()
-    vr_engineer()
-    # game_developer()
+    #vr_engineer()
+    game_developer()
     # technical_support()
     # network_security_operator()
     # back_end_developer()
