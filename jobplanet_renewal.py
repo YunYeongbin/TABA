@@ -90,7 +90,7 @@ def insert_job_data(cursor, company_name, job_title, title, skills_str):
         cursor.execute(insert_query, (jobid, company_name, job_title, title))
 
         if skills_str is None:
-            skills_str = ""
+            skills_str = "None"
 
         insert_job_skills(cursor, jobid, skills_str)
         return True
@@ -104,7 +104,7 @@ def database(info):
     conn_str = 'DRIVER={Tibero 6 ODBC Driver};SERVER=15.164.171.29;PORT=8629;DATABASE=tibero;UID=taba;PWD=tibero;'
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
-    count = 1
+    count = 0
     try:
         for item in info:
             company_name, job_title, title, skills = item
@@ -257,14 +257,14 @@ try:
     # game_developer()
     # technical_support()
     # network_security_operator()
-    back_end_developer()
-    software_developer()
-    software_architect()
+    # back_end_developer()
+    # software_developer()
+    # software_architect()
     # android_developer()
     # web_developer()
     # web_publisher()
     # cloud_developer()
-    # front_end_developer()
+    front_end_developer()
     # hardware_developer()
 finally:
     # 작업이 끝난 후에는 웹 드라이버를 종료

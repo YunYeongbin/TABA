@@ -9,61 +9,76 @@ from selenium.common.exceptions import NoSuchElementException
 url = "https://www.wanted.co.kr/wdlist?country=kr&job_sort=job.latest_order&years=-1&locations=all"
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--start-maximized")
-driver = webdriver.Chrome(options=chrome_options)
+driver = webdriver.Chrome()
 driver.implicitly_wait(3)
-# driver.get(url)
-# driver.find_element(By.CSS_SELECTOR,'button.JobGroup_JobGroup__H1m1m').click()
-# # "개발" 카테고리의 링크를 찾기 위해 대기합니다.
-# development_link = WebDriverWait(driver, 10).until(
-#     EC.presence_of_element_located((By.XPATH, "//a[contains(text(), '개발')]"))
-# )
-# # 'href' 속성을 가져옵니다.
-# development_href = development_link.get_attribute('href')
-# driver.get(development_href)
-def insert_data(cursor, company_name, job_title, title, skills):
-    try:
-        # 중복 검사 쿼리
-        check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND title = ? AND skills = ?"
-        cursor.execute(check_query, company_name, job_title, title, skills)
-        result = cursor.fetchone()
+def get_next_sequence_value(cursor, sequence_name):
+    cursor.execute(f"SELECT {sequence_name}.NEXTVAL FROM DUAL")
+    result = cursor.fetchone()
+    return result[0]
 
-        if result[0] == 0:  # 중복이 없는 경우
-            insert_query = "INSERT INTO job (company_name, job_title, title, skills) VALUES (?, ?, ?, ?)"
-            cursor.execute(insert_query, company_name, job_title, title, skills)
-            return True  # 삽입 성공
-        else:
-            print("중복 데이터가 존재합니다.")
-            print(company_name)
-            print(job_title)
-            print(title)
-            print(skills)
-            return False  # 중복으로 인한 삽입 실패
+def insert_skill_if_not_exists(cursor, skill_name):
+    # 스킬이 이미 존재하는지 확인
+    check_query = "SELECT skill_id FROM skills WHERE skill_name = ?"
+    cursor.execute(check_query, (skill_name,))
+    result = cursor.fetchone()
+
+    if result:
+        return result[0]  # 이미 존재하는 스킬의 ID 반환
+    else:
+        # 새 스킬 ID 생성을 위한 시퀀스 사용
+        skill_id = get_next_sequence_value(cursor, "skill_seq")
+
+        # 스킬 삽입
+        insert_query = "INSERT INTO skills (skill_id, skill_name) VALUES (?, ?)"
+        cursor.execute(insert_query, (skill_id, skill_name))
+        return skill_id
+
+def insert_job_skills(cursor, job_id, skills_str):
+    skills = skills_str.split(', ')  # 쉼표로 스킬 분리
+    for skill in skills:
+        skill_id = insert_skill_if_not_exists(cursor, skill)
+        # 직업-스킬 관계 삽입
+        insert_query = "INSERT INTO job_skills (job_id, skill_id) VALUES (?, ?)"
+        cursor.execute(insert_query, (job_id, skill_id))
+
+def insert_job_data(cursor, company_name, job_title, title, skills_str):
+    try:
+        # 새로운 job ID 생성을 위한 시퀀스 사용
+        jobid = get_next_sequence_value(cursor, "job_seq")
+
+        # 직업 삽입
+        insert_query = "INSERT INTO job (jobid, company_name, job_title, title) VALUES (?, ?, ?, ?)"
+        cursor.execute(insert_query, (jobid, company_name, job_title, title))
+
+        if skills_str is None:
+            skills_str = "None"
+
+        insert_job_skills(cursor, jobid, skills_str)
+        return True
     except pyodbc.Error as e:
         print(f"Error during database operation: {e}")
+        print(company_name)
+        print(job_title)
+        print(title)
         return False
-
 def database(info):
-    # 연결 문자열 설정
-    conn_str = 'DRIVER={Tibero 6 ODBC Driver};SERVER=15.164.171.29;PORT=8629;DATABASE=tibero;UID=sys;PWD=tibero;'
+    conn_str = 'DRIVER={Tibero 6 ODBC Driver};SERVER=15.164.171.29;PORT=8629;DATABASE=tibero;UID=taba;PWD=tibero;'
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
-
+    count = 0
     try:
-        # 'info' 리스트의 각 항목을 순회하며 데이터베이스에 삽입
         for item in info:
             company_name, job_title, title, skills = item
-            insert_success = insert_data(cursor, company_name, job_title, title, skills)
-            if insert_success:
+            if insert_job_data(cursor, company_name, job_title, title, skills):
                 print("Data inserted successfully.")
+                count += 1
             else:
                 print("Duplicate data. Insertion skipped.")
-
-        # 변경사항 커밋
+        print(f"삽입 데이터 = {count}")
         conn.commit()
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
-        # 연결 종료 (예외가 발생하더라도 연결이 닫히도록 함)
         conn.close()
 def crawling(crawling_urls,job_title):
     data = []
@@ -272,20 +287,20 @@ def cio():
 
 
 try:
-    software_enginner()
-    web_developer()
-    server_developer()
-    frontend_developer()
-    java_developer()
-    C_Cpp_developer()
-    python_developer()
+    # software_enginner()
+    # web_developer()
+    #server_developer()
+    #frontend_developer()
+    #java_developer()
+    #C_Cpp_developer()
+    #python_developer()
     machine_learning_developer()
-    data_engineer()
-    android_developer()
-    nodejs_developer()
-    system_manager()
-    devops_manager()
-    ios_developer()
+    # data_engineer()
+    # android_developer()
+    # nodejs_developer()
+    # system_manager()
+    # devops_manager()
+    # ios_developer()
     # embedded_developer()
     # development_manager()
     # technical_support()
