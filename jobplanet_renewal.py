@@ -104,14 +104,16 @@ def database(info):
     conn_str = 'DRIVER={Tibero 6 ODBC Driver};SERVER=15.164.171.29;PORT=8629;DATABASE=tibero;UID=taba;PWD=tibero;'
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
-
+    count = 1
     try:
         for item in info:
             company_name, job_title, title, skills = item
             if insert_job_data(cursor, company_name, job_title, title, skills):
                 print("Data inserted successfully.")
+                count += 1
             else:
                 print("Duplicate data. Insertion skipped.")
+        print(f"삽입 데이터 = {count}")
         conn.commit()
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -251,13 +253,13 @@ try:
     #erp()
     # ios_developer()
     # qa()
-    #vr_engineer()
-    #game_developer()
+    # vr_engineer()
+    # game_developer()
     # technical_support()
     # network_security_operator()
-    # back_end_developer()
-    # software_developer()
-    # software_architect()
+    back_end_developer()
+    software_developer()
+    software_architect()
     # android_developer()
     # web_developer()
     # web_publisher()
