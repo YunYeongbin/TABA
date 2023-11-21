@@ -29,11 +29,11 @@ def repeat():
     driver.implicitly_wait(3)
     start = time.time()
     last_height = driver.execute_script("return document.body.scrollHeight")
-    while time.time() - start < 600:
+    while time.time() - start < 3600:
         # scrollHeight까지 스크롤
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
         # 새로운 내용 로딩될때까지 기다림
-        time.sleep(4)
+        time.sleep(5)
         # 새로운 내용 로딩됐는지 확인
         new_height = driver.execute_script("return document.body.scrollHeight")
         if new_height == last_height:
@@ -49,58 +49,74 @@ def repeat():
         href_value = job_link.get_attribute('href')
         urls.append(href_value)
     return urls
-def insert_data(cursor, company_name, job_title, title, skills):
-    try:
-        # 중복 검사 쿼리
-        check_query = "SELECT COUNT(*) FROM job WHERE company_name = ? AND job_title = ? AND title = ? AND skills = ?"
-        cursor.execute(check_query, company_name, job_title, title, skills)
-        result = cursor.fetchone()
 
-        if result[0] == 0:  # 중복이 없는 경우
-            insert_query = "INSERT INTO job (company_name, job_title, title, skills) VALUES (?, ?, ?, ?)"
-            cursor.execute(insert_query, company_name, job_title, title, skills)
-            return True  # 삽입 성공
-        else:
-            print("중복 데이터가 존재합니다.")
-            print(company_name)
-            print(job_title)
-            print(title)
-            print(skills)
-            return False  # 중복으로 인한 삽입 실패
+def get_next_sequence_value(cursor, sequence_name):
+    cursor.execute(f"SELECT {sequence_name}.NEXTVAL FROM DUAL")
+    result = cursor.fetchone()
+    return result[0]
+
+def insert_skill_if_not_exists(cursor, skill_name):
+    # 스킬이 이미 존재하는지 확인
+    check_query = "SELECT skill_id FROM skills WHERE skill_name = ?"
+    cursor.execute(check_query, (skill_name,))
+    result = cursor.fetchone()
+
+    if result:
+        return result[0]  # 이미 존재하는 스킬의 ID 반환
+    else:
+        # 새 스킬 ID 생성을 위한 시퀀스 사용
+        skill_id = get_next_sequence_value(cursor, "skill_seq")
+
+        # 스킬 삽입
+        insert_query = "INSERT INTO skills (skill_id, skill_name) VALUES (?, ?)"
+        cursor.execute(insert_query, (skill_id, skill_name))
+        return skill_id
+
+def insert_job_skills(cursor, job_id, skills_str):
+    skills = skills_str.split(', ')  # 쉼표로 스킬 분리
+    for skill in skills:
+        skill_id = insert_skill_if_not_exists(cursor, skill)
+        # 직업-스킬 관계 삽입
+        insert_query = "INSERT INTO job_skills (job_id, skill_id) VALUES (?, ?)"
+        cursor.execute(insert_query, (job_id, skill_id))
+
+def insert_job_data(cursor, company_name, job_title, title, skills_str):
+    try:
+        # 새로운 job ID 생성을 위한 시퀀스 사용
+        jobid = get_next_sequence_value(cursor, "job_seq")
+
+        # 직업 삽입
+        insert_query = "INSERT INTO job (jobid, company_name, job_title, title) VALUES (?, ?, ?, ?)"
+        cursor.execute(insert_query, (jobid, company_name, job_title, title))
+
+        if skills_str is None:
+            skills_str = ""
+
+        insert_job_skills(cursor, jobid, skills_str)
+        return True
     except pyodbc.Error as e:
         print(f"Error during database operation: {e}")
+        print(company_name)
+        print(job_title)
+        print(title)
         return False
-
 def database(info):
-    # 연결 문자열 설정
-    conn_str = 'DRIVER={Tibero 6 ODBC Driver};SERVER=15.164.171.29;PORT=8629;DATABASE=tibero;UID=sys;PWD=tibero;'
+    conn_str = 'DRIVER={Tibero 6 ODBC Driver};SERVER=15.164.171.29;PORT=8629;DATABASE=tibero;UID=taba;PWD=tibero;'
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
 
     try:
-        # 'info' 리스트의 각 항목을 순회하며 데이터베이스에 삽입
         for item in info:
             company_name, job_title, title, skills = item
-            insert_success = insert_data(cursor, company_name, job_title, title, skills)
-            if insert_success:
+            if insert_job_data(cursor, company_name, job_title, title, skills):
                 print("Data inserted successfully.")
             else:
                 print("Duplicate data. Insertion skipped.")
-
-        # 변경사항 커밋
         conn.commit()
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
-        # 연결 종료 (예외가 발생하더라도 연결이 닫히도록 함)
         conn.close()
-    # 테이블 생성
-    #cursor.execute("select * from v$database")
-    #for row in cursor:
-        #print(row)
-    # for data in info:
-    #     for i in data:
-    #         print(i.strip())
 def back():
     url = "https://www.jobplanet.co.kr/job"
     driver.get(url)
@@ -174,7 +190,7 @@ def crawling(urls):
     sum_data = []
     for url in urls:
         driver.get(url)
-        driver.implicitly_wait(3)
+        driver.implicitly_wait(10)
         company_name = driver.find_element(By.CSS_SELECTOR, '.company_name a').text.strip()
         title = driver.find_element(By.CSS_SELECTOR,'.ttl').text.strip()
         # try:
@@ -232,11 +248,11 @@ try:
     init()
     #cto()
     #dba()
-    # erp()
+    #erp()
     # ios_developer()
     # qa()
     #vr_engineer()
-    game_developer()
+    #game_developer()
     # technical_support()
     # network_security_operator()
     # back_end_developer()
