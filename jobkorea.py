@@ -11,8 +11,10 @@ url = "https://www.jobkorea.co.kr/recruit/joblist?menucode=local&localorder=1"
 driver = webdriver.Chrome()
 driver.implicitly_wait(3)
 driver.get(url)
-driver.find_element(By.CSS_SELECTOR,'.btn_tit').click()
+driver.find_element(By.CSS_SELECTOR, '.btn_tit').click()
 time.sleep(3)
+
+
 def crawling(crawling_url):
     data = []
     # 새 창 열기
@@ -30,8 +32,8 @@ def crawling(crawling_url):
         )
         co_name = co_name_element.text
         # dt 태그 (항목 이름)와 dd 태그 (항목 값)를 각각 추출
-        dt_elements = driver.find_elements(By.CSS_SELECTOR,'.tbList dt')
-        dd_elements = driver.find_elements(By.CSS_SELECTOR,'.tbList dd')
+        dt_elements = driver.find_elements(By.CSS_SELECTOR, '.tbList dt')
+        dd_elements = driver.find_elements(By.CSS_SELECTOR, '.tbList dd')
 
         for dt, dd in zip(dt_elements, dd_elements):
             info[dt.text] = dd.text
@@ -51,6 +53,8 @@ def crawling(crawling_url):
         driver.switch_to.window(window_name=first_tab)
         time.sleep(3)
         return info
+
+
 try:
     element = driver.find_element(By.ID, "duty_step1_10031")
     driver.execute_script("arguments[0].click();", element)
@@ -73,7 +77,7 @@ try:
     for i in range(1, total_jobs_number + 1):
         titBx_divs = driver.find_elements(By.CSS_SELECTOR, 'div.titBx')
         for div in titBx_divs[:40]:
-            a_tag = div.find_element(By.TAG_NAME,'a')
+            a_tag = div.find_element(By.TAG_NAME, 'a')
             href = a_tag.get_attribute('href')
             if href is not None:
                 info = crawling(href)
@@ -84,7 +88,7 @@ try:
             )
             next_button.click()
         else:
-            page_link_xpath = f"//ul/li/a[@data-page='{i+1}']"
+            page_link_xpath = f"//ul/li/a[@data-page='{i + 1}']"
             page_link = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, page_link_xpath))
             )
