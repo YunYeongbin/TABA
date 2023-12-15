@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.taba.repository.JoinRepository">
+    <select id="selectJoin" parameterType="com.example.taba.model.Join" resultType="com.example.taba.model.Join">
+        SELECT a.job_title, a.skill_name, a.cnt, b.total_jobs
+        FROM (
+        SELECT job_title, skill_name, count(*) as cnt
+        FROM job
+        JOIN job_skills ON job.jobid = job_skills.job_id
+        JOIN skills ON job_skills.skill_id = skills.skill_id
+        WHERE job_title = #{job_title} and skill_name != 'NULL' and year=#{year} and apply_date=#{apply_date}
+        GROUP BY job_title, skill_name order by count(*) desc
+        ) a
+        CROSS JOIN (
+        SELECT count(*) as total_jobs
+        FROM job
+        WHERE job_title = #{job_title}
+        ) b
+        WHERE ROWNUM <![CDATA[<=]]> 5;
+    </select>
+</mapper>
