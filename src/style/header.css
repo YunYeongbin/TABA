@@ -1,0 +1,111 @@
+.body{
+    width: 1440px;
+    height: 93;
+    padding: 20px;
+    border-bottom: 1px #E0E0E0 solid;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+}
+
+.LogoMenuNav{
+    height: 53px;
+    justify-content: space-between;
+    align-items: flex-end;
+    display: flex;
+}
+
+.Logo{
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    background: #fff;
+    border: none;
+}
+
+
+.titleWrapper{
+    color: black;
+    font-size: 36px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+.sloganWrapper{
+    color: #43576B;
+    font-size: 16px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+.MenuLinkNav{
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    display: flex;
+}
+
+.LinkNav{
+    justify-content: center;
+    align-items: flex-start;
+    gap: 50px;
+    display: flex;
+}
+
+.textWrapper{
+    color: #142A50;
+    font-size: 20px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+.nav-link{
+    color: #000;
+    font-size: 20px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+    text-decoration: none;
+}
+
+.nav-link:hover{
+    cursor: pointer;
+    color: #2975F4;
+}
+
+.nav-linka{
+    cursor: pointer;
+    color: #2975F4;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.Login{
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background: #4285F4;
+    border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    border: #4285F4;
+}
+
+.Login:hover{
+    cursor: pointer;
+    background: #025ce2;
+}
+
+.LogintextWrapper{
+    color: #fff;
+    font-size: 20px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+}

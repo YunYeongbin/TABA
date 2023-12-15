@@ -1,0 +1,111 @@
+.Loginbody{
+    width: 1440px;
+    background: #fff;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 150px;
+    display: flex;
+    margin: 0 auto;
+    cursor: default;
+}
+
+.Logobody{
+    width: 1440px;
+    height: 93;
+    padding: 20px;
+    border-bottom: 1px #E0E0E0 solid;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+}
+
+.LoginLogoMenuNav{
+    height: 53px;
+    justify-content: space-between;
+    align-items: flex-end;
+    display: flex;
+}
+
+.LoginLogo{
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    background: #fff;
+    border: none;
+}
+
+.LogintitleWrapper{
+    color: black;
+    font-size: 36px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+.loginWrapper{
+    color: #43576B;
+    font-size: 16px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+.LoginTypoFrame{
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 75px;
+    display: flex;
+}
+
+.LoginTypo{
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    display: flex;
+}
+
+.LoginMainTypo{
+    text-align: center;
+    color: black;
+    font-size: 32px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+.LoginSloganTypo{
+    color: #9E9E9E;
+    font-size: 20px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+.NavLoginButton{
+    padding: 15px 35px;
+    background: #4285F4;
+    border-radius: 10px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
+    border: none;
+}
+
+.NavLoginButton:hover{
+    cursor: pointer;
+    background: #025ce2;
+}
+
+.LoginButtonTypo{
+    text-align: center;
+    color: #fff;
+    font-size: 22px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+}

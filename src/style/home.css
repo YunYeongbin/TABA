@@ -1,0 +1,109 @@
+.Main{
+    width: 1440px;
+    background: #fff;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 40px;
+    display: flex;
+    margin: 0 auto;
+    cursor: default;
+}
+
+.MainIntro1{
+    justify-content: flex-start;
+    align-items: center;
+    gap: 30px;
+    display: inline-flex;
+}
+
+.TrendIntro1{
+    width: 666px;
+    height: 388px;
+    justify-content: center;
+    align-items: center;
+    display: inline-flex;
+    background: radial-gradient(50% 50% at 50%, rgba(123.29, 171.26, 250.75, 0.25) 0%, rgba(195.74, 217.65, 253.94, 0) 100%);
+    border-radius: 9999px;
+}
+
+
+.TrendtextWrapper1{
+    color: black;
+    font-size: 48px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+    text-shadow: 0px 2px 4px #00000040;
+}
+
+.TrendIntro2{
+    width: 620px;
+    padding-top: 60px;
+    padding-bottom: 160px;
+    background-image: url("../image/Trend_chart.jpg");
+    justify-content: flex-end;
+    align-items: center;
+    display: flex;
+}
+
+.TrendtextWrapper2{
+    text-align: right;
+    color: #142A50;
+    font-size: 20px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+    text-shadow: 0px 2px 4px #00000040;
+}
+
+.MainIntro2{
+    width: 1209px;
+    height: 410px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 50px;
+    display: inline-flex;
+}
+
+.AiIntro1{
+    height: 242px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 21px;
+    display: inline-flex;
+}
+
+.IconBrain{
+    content:url("../image/icon\ _brain_.jpg")
+}
+
+.AitextWrapper1{
+    color: #142A50;
+    font-size: 20px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+    text-shadow: 0px 2px 4px #00000040;
+}
+
+.AiIntro2{
+    width: 863px;
+    padding-top: 134px;
+    padding-bottom: 134px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    background: radial-gradient(50% 50% at 50%, rgba(123.29, 171.26, 250.75, 0.25) 0%, rgba(195.74, 217.65, 253.94, 0) 100%);
+    border-radius: 9999px;
+}
+
+.AitextWrapper2{
+    color: black;
+    font-size: 48px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+    text-shadow: 0px 2px 4px #00000040;
+}

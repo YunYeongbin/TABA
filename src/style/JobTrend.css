@@ -1,0 +1,176 @@
+.MainBody{
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 40px;
+    display: inline-flex;
+}
+
+.Trendbody{
+    width: 1440px;
+    background: #fff;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 40px;
+    display: flex;
+    margin: 0 auto;
+    cursor: default;
+}
+
+.MenuSelect{
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 25px;
+    display: flex;
+}
+
+.SubTitleBox{
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: 1px #4285F4 solid;
+    justify-content: center;
+    align-items: center;
+    display: inline-flex;
+}
+
+.SubTitletext{
+    color: #4285F4;
+    font-size: 18px;
+    font-family: Heebo;
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+.FilterList{
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 20px;
+    display: inline-flex;
+}
+
+.YearOption{
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    display: inline-flex;
+}
+
+.LabelTypo{
+    color: #808080;
+    font-size: 16px;
+    font-family: Noto Sans KR;
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+.Selection{
+    font-size: 16px;
+    font-family: Noto Sans KR;
+    font-weight: 700;
+    word-wrap: break-word;
+    justify-content: flex-start;
+    align-items: center;
+    display: inline-flex;
+}
+
+.HalfYearOption{
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    display: inline-flex;
+}
+
+.JopOption{
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    display: inline-flex;
+}
+
+.ButtonStyle{
+    padding: 13px 50px;
+    background: #4285F4;
+    border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    border: #4285F4;
+}
+.ButtonStyle:hover{
+    cursor: pointer;
+    background: var(--button-hover-bg-color, #025ce2);
+}
+
+.ButtonTextWrapper{
+    color: white;
+    font-size: 16px;
+    font-family: Noto Sans KR;
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+.SkillTrendChart{
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px;
+    display: flex;
+}
+
+.ChartTitle{
+    color: #4285F4;
+    font-size: 18px;
+    font-family: Noto Sans KR;
+    font-weight: 700;
+    word-wrap: break-word;
+    border-bottom: 1px #E0E0E0 solid;
+    padding-bottom: 5px;
+}
+
+.ChartTable{
+    padding: 5px 20px;
+    border-left: 1.50px #5887D4 solid;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 15px;
+    display: flex;
+}
+
+.BarItem{
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    display: flex;
+}
+
+.BarChartMax{
+    width: 650px;
+    height: 12px;
+    background: #DDDDDD;
+}
+
+.BarTypo{
+    color: black;
+    font-size: 16px;
+    font-family: Noto Sans KR;
+    font-weight: 700;
+    word-wrap: break-word;
+}
+
+.BarChart{
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    display: inline-flex;
+}
+
+.BarChartPercent{
+    color: #656565;
+    font-size: 16px;
+    font-family: Noto Sans KR;
+    font-weight: 700;
+    word-wrap: break-word;
+}

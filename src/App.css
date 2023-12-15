@@ -1,0 +1,89 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.textWrapper{
+  position: relative;
+  width: 100%;
+  height: 13px;
+  left: 0px;
+  top: 2px;
+
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  /* or 150% */
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  letter-spacing: 0.09px;
+
+  color: #171717;
+}
+
+.Typo{
+  color: #8a8a8a;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: .0145em;
+  line-height: 20px;
+  text-align: Center;
+  margin: 0;
+}
+
+.FilterItem{
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  grid-gap: 8px;
+  gap: 8px;
+}
+
+.FilterList{
+  display: flex;
+  grid-gap: 20px;
+  gap: 20px;
+  align-items: center;
+  padding-top: 40px;
+  margin-bottom: -8px;
+}
